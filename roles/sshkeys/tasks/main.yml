@@ -1,0 +1,35 @@
+---
+- name: Check that /etc/pve/priv/authorized_keys exists
+  stat:
+    path: /etc/pve/priv/authorized_keys
+  register: pauthkey
+
+- name: Fail if it's not there
+  fail:
+    msg: "/etc/pve/priv/authorized_keys does not exist - Proxmox is not setup"
+  when: not pauthkey.stat.exists
+
+- name: Add ssh keys from group vars
+  authorized_key:
+    user: root
+    path: /etc/pve/priv/authorized_keys
+    state: present
+    exclusive: false
+    manage_dir: false
+    key: "{{ sshkeys | join('\n') | string }}"
+  tags: ssh
+
+- name: SSH Security - Disable empty password login
+  lineinfile: dest=/etc/ssh/sshd_config regexp="^#?PermitEmptyPasswords" line="PermitEmptyPasswords no"
+  notify: restart-sshd
+
+- name: Disable password logins totally - keys only
+  lineinfile: dest=/etc/ssh/sshd_config regexp="^(#\s*)?PasswordAuthentication " line="PasswordAuthentication no"
+  notify: restart-sshd
+
+- name: Activate ssh keepalives if needed
+  lineinfile: dest=/etc/ssh/sshd_config regexp="^(#\s*)?ClientAliveInterval " line="ClientAliveInterval = 60"
+  notify: restart-sshd
+
+- meta: flush_handlers
+

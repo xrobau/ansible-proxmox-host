@@ -1,0 +1,214 @@
+---
+- name: Disable proxmox enterprise
+  copy:
+    src: pve-enterprise.list
+    dest: /etc/apt/sources.list.d/pve-enterprise.list
+  notify:
+    - apt-update
+
+- name: Put the public repo in place
+  copy:
+    src: sources.list
+    dest: /etc/apt/sources.list
+  notify:
+    - apt-update
+
+- meta: flush_handlers
+
+- name: Remove unneeded packages
+  apt:
+    name:
+      - multipath-tools
+      - needrestart
+      - snapd
+      - cloud-init
+      - ubuntu-advantage-tools
+    state: absent
+    purge: yes
+    autoremove: yes
+
+- name: Install base packages that are needed
+  apt:
+    name:
+      - vim
+      - iputils-ping
+      - open-vm-tools
+      - jq
+      - fdisk
+      - gpg
+      - dialog
+      - qemu-guest-agent
+      - net-tools
+      - openvswitch-switch
+      - libpve-network-perl 
+    state: present
+
+- name: Update grub defaults
+  copy:
+    src: grubdefault
+    dest: /etc/default/grub
+  notify: update-grub
+  register: grub
+
+- meta: flush_handlers
+
+- name: Check that eth0 exists
+  stat:
+    path: /sys/class/net/eth0
+  register: eth
+
+- fail:
+    msg: "eth0 does not exist, you must reboot the machine and reconfig /etc/network/interfaces"
+  when: not eth.stat.exists
+
+- name: Fix default editor
+  alternatives:
+    name: editor
+    path: /usr/bin/vim.basic
+  tags:
+    - editor
+
+- name: Stop vim from doing crazy things with the mouse
+  copy:
+    src: vimrc
+    dest: /root/.vimrc
+
+- name: Turn off paste blocking in bash
+  lineinfile:
+    path: /etc/bash.bashrc
+    line: bind 'set enable-bracketed-paste off'
+    create: yes
+  tags:
+    - bracket
+
+- name: Turn off paste blocking everywhere else
+  lineinfile:
+    path: /etc/inputrc
+    line: "set enable-bracketed-paste off"
+    create: yes
+  tags:
+    - bracket
+
+- name: Hard-code editor
+  lineinfile:
+    path: /etc/bash.bashrc
+    line: export EDITOR=vim
+    create: yes
+
+- name: Hard-code visual
+  lineinfile:
+    path: /etc/bash.bashrc
+    line: export VISUAL=vim
+    create: yes
+
+- name: Stop rsyslog from dropping privs if it's there
+  lineinfile:
+    path: /etc/rsyslog.conf
+    regex: '^.PrivDropTo'
+    state: absent
+  tags: rsyslog
+
+- name: Put our /etc/sysctl.d files in place
+  copy:
+    src: "{{ item }}"
+    dest: /etc/sysctl.d/
+  with_items:
+    - 10-keepalives.conf
+    - 60-faster-tcp.conf
+  notify: sysctl-reload
+  tags:
+    - sysctl
+
+- meta: flush_handlers
+
+- name: Create default ssh config
+  copy:
+    src: sshconfig
+    dest: /root/.ssh/config
+    force: no
+  tags:
+    - ssh
+
+- name: Set system start timeout to 60s
+  lineinfile:
+    path: /etc/systemd/system.conf
+    regex: '^#?DefaultTimeoutStartSec='
+    line: DefaultTimeoutStartSec=60s
+  tags:
+    - systemd
+
+- name: Set system stop timeout to 30s
+  lineinfile:
+    path: /etc/systemd/system.conf
+    regex: '^#?DefaultTimeoutStopSec='
+    line: DefaultTimeoutStopSec=30s
+  tags:
+    - systemd
+
+- name: Never hang waiting for network connections
+  systemd:
+    name: systemd-networkd-wait-online.service
+    state: stopped
+    enabled: no
+    masked: yes
+  tags:
+    - systemd
+
+- name: Set /tmp to be 0777 instead of 1777
+  copy:
+    src: tmp-0777.conf
+    dest: /etc/tmpfiles.d/
+  tags:
+    - systemd
+    - tmpfiles
+  notify:
+    - systemd-tmpfiles
+
+- name: Check if resolv.conf is a symlink?
+  stat:
+    path: /etc/resolv.conf
+  register: rconf
+  tags:
+    - dns
+
+- name: Delete resolv.conf symlink if it exists
+  file:
+    state: absent
+    path: /etc/resolv.conf
+  when: rconf.stat.islnk
+  tags:
+    - dns
+
+- name: Create valid /etc/resolv.conf
+  template:
+    src: resolv.conf
+    dest: /etc/resolv.conf
+  tags:
+    - dns
+
+# SSH8 disables ssh-rsa keys. Re-enable it.
+- name: Allow ssh-rsa in ssh keys
+  lineinfile:
+    path: /etc/ssh/ssh_config
+    state: present
+    insertafter: ^Host
+    regexp: 'PubkeyAcceptedKeyTypes '
+    line: "    PubkeyAcceptedKeyTypes +ssh-rsa"
+
+- name: Enable agent forwarding
+  lineinfile:
+    path: /etc/ssh/ssh_config
+    state: present
+    insertafter: ^Host
+    regexp: 'ForwardAgent '
+    line: "    ForwardAgent yes"
+
+- name: VNC Proxy needs all the LC_ variables forwarded
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    regexp: '^AcceptEnv'
+    line: "AcceptEnv LANG LC_*"
+  notify:
+    - restart-sshd
+

@@ -1,0 +1,4 @@
+---
+dependencies:
+  - dpkg-python3
+  - console-autologin

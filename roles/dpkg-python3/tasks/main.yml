@@ -1,0 +1,34 @@
+---
+- name: Make sure python-is-python3 is installed
+  raw: "dpkg -s python-is-python3"
+  register: python3
+  failed_when: false
+  changed_when: false
+  tags:
+    - python3
+    - packages
+
+- name: Purge needrestart if it's hanging around
+  raw: "dpkg -P needrestart"
+  when: python3.rc != 0
+  failed_when: false
+  changed_when: false
+  tags:
+    - python3
+    - packages
+
+- name: Run update and install python3
+  raw: "apt-get update && apt-get -y install python-is-python3"
+  register: python
+  when: python3.rc != 0
+  failed_when: false
+  tags:
+    - python3
+    - packages
+
+- name: python-is-python3 was installed
+  debug: var=python
+  when: python.skipped is not defined
+  tags:
+    - python3
+    - packages

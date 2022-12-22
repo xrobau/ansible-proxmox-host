@@ -1,0 +1,4 @@
+# Added by ubuntu-knfs role in ansible
+
+[Service]
+TimeoutStopSec=infinity

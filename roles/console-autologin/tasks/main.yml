@@ -1,0 +1,15 @@
+---
+- name: Make override directory
+  file:
+    state: directory
+    path: /etc/systemd/system/getty@tty1.service.d
+    owner: root
+    group: root
+
+- name: Put override in place
+  copy:
+    src: override.conf
+    dest: /etc/systemd/system/getty@tty1.service.d/
+  notify: systemctl-reload
+
+

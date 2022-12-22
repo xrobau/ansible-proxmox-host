@@ -1,0 +1,23 @@
+---
+- name: apt-update
+  apt:
+    update_cache: true
+
+- name: systemctl-reload
+  command: systemctl daemon-reload
+
+- name: update-grub
+  command: update-grub
+
+- name: restart-sshd
+  service: name=sshd state=restarted
+
+- name: systemd-tmpfiles
+  command: systemd-tmpfiles --create
+
+- name: sysctl-reload
+  command: sysctl --system
+  ignore_errors: yes
+  when: container is not defined
+
+

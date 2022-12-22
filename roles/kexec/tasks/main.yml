@@ -1,0 +1,86 @@
+---
+- name: Install kexec package
+  apt:
+    name:
+      - kexec-tools
+      - libpve-network-perl 
+    state: present
+
+- name: Make reboot override folder
+  file:
+    state: directory
+    path: /etc/systemd/system/systemd-reboot.service.d
+    mode: 0755
+  tags:
+    - kexec
+
+- name: Put reboot override in place
+  copy:
+    dest: /etc/systemd/system/systemd-reboot.service.d/override.conf
+    src:  reboot.override.conf
+    mode: 0644
+  tags:
+    - kexec
+  notify: systemctl-reload
+
+- name: Set bootpath for proxmox
+  set_fact:
+    bootpath: /boot/pve
+  tags:
+    - kexec
+
+- name: Create kexec-load service
+  template:
+    dest: /etc/systemd/system/kexec-load.service
+    src:  kexec-load.service
+    mode: 0644
+  tags:
+    - kexec
+  notify: systemctl-reload
+
+- name: Make finalrd override folder
+  file:
+    state: directory
+    path: /etc/systemd/system/finalrd.service.d
+    mode: 0755
+  tags:
+    - kexec
+
+- name: Put finalrd override in place
+  copy:
+    dest: /etc/systemd/system/finalrd.service.d/override.conf
+    src: finalrd.override
+    mode: 0644
+  tags:
+    - kexec
+  notify: systemctl-reload
+
+- name: Make kexec override folder
+  file:
+    state: directory
+    path: /etc/systemd/system/systemd-kexec.service.d
+    mode: 0755
+  tags:
+    - kexec
+
+- name: Put kexec override in place
+  copy:
+    dest: /etc/systemd/system/systemd-kexec.service.d/override.conf
+    src: kexec.override
+    mode: 0644
+  tags:
+    - kexec
+  notify: systemctl-reload
+
+# Not sure why I need this *twice*, but it can't hurt.
+- name: Boot the kexec-load service
+  service:
+    name: kexec-load
+    state: started
+
+- name: Enable the kexec-load service for next time
+  service:
+    name: kexec-load
+    state: started
+    enabled: true
+

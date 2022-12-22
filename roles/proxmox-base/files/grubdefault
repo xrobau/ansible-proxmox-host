@@ -1,0 +1,29 @@
+# This file is put in place by the ubuntu-base role in ansible.
+# If you change it, it will be overwritten.
+#
+# But don't forget to run 'update-grub' afterwards, anyway, to
+# update /boot/grub/grub.cfg.
+
+GRUB_DEFAULT=0
+GRUB_TIMEOUT_STYLE=menu
+GRUB_TIMEOUT=5
+GRUB_DISTRIBUTOR=`lsb_release -i -s 2> /dev/null || echo Debian`
+
+# The difference between _LINUX_DEFAULT and just _LINUX is that
+# the _DEFAULT entries are NOT used in recovery mode. We want
+# these everywhere, so they're used everywhere.
+GRUB_CMDLINE_LINUX_DEFAULT=""
+
+# ifnames/biosdevname:
+#   Use ethx, not random enswhatever names
+# mitigations=off:
+#    Disable all SPECTRE/etc mitigations (minor performance improvement)
+# init_on_alloc=0:
+#    Do not clear pages when allocated (significant performance improvement)
+GRUB_CMDLINE_LINUX="nofb nomodeset net.ifnames=0 biosdevname=0 mitigations=off init_on_alloc=0"
+
+# Always text console
+GRUB_TERMINAL=console
+GRUB_GFXMODE=text
+
+
