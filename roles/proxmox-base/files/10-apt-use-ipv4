@@ -1,0 +1,3 @@
+# This file put in place by the proxmox-base ansible role
+Acquire::ForceIPv4 "true";
+

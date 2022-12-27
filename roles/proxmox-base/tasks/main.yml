@@ -1,4 +1,9 @@
 ---
+- name: Force apt to only use ipv4
+  copy:
+    src: 10-apt-use-ipv4
+    dest: /etc/apt/apt.conf.d/
+
 - name: Disable proxmox enterprise
   copy:
     src: pve-enterprise.list
