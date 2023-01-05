@@ -46,6 +46,7 @@
       - net-tools
       - openvswitch-switch
       - libpve-network-perl 
+      - sysstat
     state: present
 
 - name: Update grub defaults
