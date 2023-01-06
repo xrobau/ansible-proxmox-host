@@ -47,6 +47,7 @@
       - openvswitch-switch
       - libpve-network-perl 
       - sysstat
+      - chrony
     state: present
 
 - name: Update grub defaults
@@ -217,4 +218,21 @@
     line: "AcceptEnv LANG LC_*"
   notify:
     - restart-sshd
+
+- name: Put chrony config file in place
+  copy:
+    src: chrony.conf
+    dest: /etc/chrony/chrony.conf
+  notify:
+    - restart-chrony
+  tags:
+    - chrony
+
+- name: Make sure chrony is enabled and running
+  service:
+    name: chrony
+    state: started
+    enabled: true
+  tags:
+    - chrony
 

@@ -12,6 +12,9 @@
 - name: restart-sshd
   service: name=sshd state=restarted
 
+- name: restart-chrony
+  service: name=chrony state=restarted
+
 - name: systemd-tmpfiles
   command: systemd-tmpfiles --create
 
