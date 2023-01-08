@@ -236,3 +236,11 @@
   tags:
     - chrony
 
+- name: Put 443-8006 remapper script in place
+  copy:
+    src: fix-port-8006.sh
+    dest: /usr/local/bin/fix-port-8006.sh
+  tags:
+    - httpsport
+
+

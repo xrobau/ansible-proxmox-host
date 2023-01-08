@@ -31,6 +31,11 @@ iface vlan500 inet static
 	ovs_bridge vmbr0
 	ovs_mtu 1500
 	ovs_options tag=500
+	# If you want port 8006 to be mapped to port 443 on this
+	# interface, uncomment this line. (The fix-port-8006 script
+	# is in the Ansible proxmox-base role)
+	# post-up /usr/local/bin/fix-port-8006.sh
+
 
 auto vlan555
 iface vlan555 inet static
@@ -46,7 +51,12 @@ iface bond0 inet manual
 	ovs_type OVSBond
 	ovs_bridge vmbr0
 	ovs_mtu 9000
-	ovs_options bond_mode=balance-tcp lacp=active
+	# Due to an issue/bug with OVS and MLAG switches, you have to use
+	# active-backup, and fast LACP on *both ends*. If you're not using
+	# mlag, you PROBABLY don't need to, but if you have strange traffic
+	# pauses on some connections/flows but not others, try it.
+	ovs_options bond_mode=active-backup lacp=active other_config:lacp-time=fast
+	# ovs_options bond_mode=balance-tcp lacp=active
 
 # Note that PROXMOX requires the ovs_ports here to reference any
 # vlans above. There doesn't appear to be any reason for this,
