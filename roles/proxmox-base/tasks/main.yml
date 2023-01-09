@@ -240,6 +240,7 @@
   copy:
     src: fix-port-8006.sh
     dest: /usr/local/bin/fix-port-8006.sh
+    mode: 0755
   tags:
     - httpsport
 
