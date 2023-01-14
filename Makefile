@@ -10,7 +10,7 @@ ANSIBLE_HOST_KEY_CHECKING=False
 export ANSIBLE_HOST_KEY_CHECKING
 
 .PHONY: setup
-setup: $(ANSBIN) ansible-collections base-packages /etc/network/example.interfaces
+setup: $(ANSBIN) ansible-collections base-packages /etc/network/example.interfaces.ovs /etc/network/example.interfaces
 
 .PHONY: proxmox
 proxmox: | setup
@@ -27,31 +27,31 @@ update:
 	apt-get -y dist-upgrade
 	apt-get remove --purge $$(dpkg -l | awk '/^r/ {print $$2}')
 
-/etc/network/example.interfaces: example.interfaces
+/etc/network/example.interfaces.ovs: example.interfaces.ovs
+	@cp $< $@
+
+/etc/network/example.interfaces: example.interfaces.std
 	@cp $< $@
 	@echo "NOTE: /etc/network/example.interfaces has been created."
-	@echo "Please use that as a template to create the OVS interfaces config"
+	@echo "Please use that as a template to create the proxmox interfaces config"
 	@echo "after the grub configuration has been updated."
+	@echo "There is also an example.interfaces.ovs that can be used if you wish to"
+	@echo "use Open vSwitch, but is not recommended for production use."
 	@echo "You will only see this once. Please re-run the make command"
+	@echo ""
 	@exit 1
 
 $(ANSBIN): | base-packages
 	apt-get -y install ansible
 
 .PHONY: ansible-collections
-ansible-collections: ~/.ansible/collections/ansible_collections/community/general ~/.ansible/roles/jhu-sheridan-libraries.postfix-smarthost/README.md ~/.ansible/roles/geerlingguy.php/README.md ~/.ansible/roles/geerlingguy.php-versions ~/.ansible/collections/ansible_collections/ansible/posix/MANIFEST.json
+ansible-collections: ~/.ansible/collections/ansible_collections/community/general ~/.ansible/roles/jhu-sheridan-libraries.postfix-smarthost/README.md ~/.ansible/collections/ansible_collections/ansible/posix/MANIFEST.json
 
 ~/.ansible/collections/ansible_collections/ansible/posix/MANIFEST.json:
 	ansible-galaxy collection install ansible.posix
 
 ~/.ansible/roles/jhu-sheridan-libraries.postfix-smarthost/README.md:
 	ansible-galaxy install jhu-sheridan-libraries.postfix-smarthost
-
-~/.ansible/roles/geerlingguy.php/README.md:
-	ansible-galaxy install geerlingguy.php
-
-~/.ansible/roles/geerlingguy.php-versions:
-	ansible-galaxy install geerlingguy.php-versions
 
 ~/.ansible/collections/ansible_collections/community/general:
 	@ansible-galaxy collection install community.general
