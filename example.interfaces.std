@@ -37,6 +37,10 @@ iface vmbr30 inet static
 	gateway 10.40.0.1
 	bridge-ports bond0.30
 	bridge-stp off
+	# If you want port 8006 to be mapped to port 443 on this
+	# interface, uncomment this line. (The fix-port-8006 script
+	# is in the Ansible proxmox-base role)
+	# post-up /usr/local/bin/fix-port-8006.sh
 
 auto vmbr0
 iface vmbr0 inet manual
