@@ -2,6 +2,10 @@
 
 SHELL=/bin/bash
 
+# You will need to change this if you're not xrobau
+OVF=VMware-ovftool-4.4.2-17901668-lin.x86_64.bundle
+OVFURL=http://10.46.80.198/$(OVF)
+
 halp: setup
 	@echo Read the Makefile
 
@@ -71,5 +75,17 @@ base-packages: /usr/bin/wget /usr/bin/unzip /usr/bin/vim /usr/bin/ping
 /usr/bin/ping:
 	@apt-get -y install iputils-ping
 
+.PHONY: ovftool
+ovftool: /usr/bin/ovftool
+
+.PHONY: uninstall-ovftool
+uninstall-ovftool: /usr/local/$(OVF)
+	@/bin/bash $< --uninstall-product=vmware-ovftool
+
+/usr/bin/ovftool: /usr/local/$(OVF)
+	@/bin/bash $< --eulas-agreed
+
+/usr/local/$(OVF): /usr/bin/wget
+	@/usr/bin/wget -O $@ $(OVFURL)
 
 
