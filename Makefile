@@ -2,9 +2,9 @@
 
 SHELL=/bin/bash
 
-# You will need to change this if you're not xrobau
+# You may need to change this if you're not xrobau
 OVF=VMware-ovftool-4.4.2-17901668-lin.x86_64.bundle
-OVFURL=http://10.46.80.198/$(OVF)
+OVFURL=https://www.dropbox.com/s/jcj1jeody1m56pi/$(OVF)
 
 halp: setup
 	@echo Read the Makefile
