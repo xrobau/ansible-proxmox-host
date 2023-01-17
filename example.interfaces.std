@@ -4,8 +4,7 @@
 #
 # If you want to manage parts of the network configuration manually,
 # please utilize the 'source' or 'source-directory' directives to do
-# so.
-# PVE will preserve these directives, but will NOT read its network
+# so.  # PVE will preserve these directives, but will NOT read its network
 # configuration from sourced files, so do not attempt to move any of
 # the PVE managed interfaces into external files!
 
@@ -29,33 +28,48 @@ iface bond0 inet manual
 	bond-mode 802.3ad
 	mtu 9000
 
-# This is a vmbridge, VMs can connect to vlan30 as
-# well as the host
+# This is the primary bridge that everything feeds from. Yes,
+# you do want all of these settings.
+auto vmbr0
+iface vmbr0 inet manual
+	bridge-ports bond0
+	bridge-stp off
+	bridge-fd 0
+	bridge-vlan-aware yes
+	bridge-vids 2-4094
+	mtu 9000
+
+# This is a vmbridge, which allows VMs to connect to vlan30 as
+# well as the host.
 auto vmbr30
 iface vmbr30 inet static
 	address 10.40.0.41/24
 	gateway 10.40.0.1
 	bridge-ports bond0.30
 	bridge-stp off
+	bridge-fd 0
 	# If you want port 8006 to be mapped to port 443 on this
 	# interface, uncomment this line. (The fix-port-8006 script
 	# is in the Ansible proxmox-base role)
 	# post-up /usr/local/bin/fix-port-8006.sh
 
-auto vmbr0
-iface vmbr0 inet manual
-	bridge-ports bond0
-	bridge-stp off
-	bridge-fd 0
 
-# This is not a bridge, this is a standard interface
-# that the host uses to connect to the SAN. It is not
-# accessable to VMs
-auto bond0.555
-iface bond0.555 inet manual
+# You can add a secondary IP to that vmbridge with a second 'iface vmbr30'
+# stanza such as:
+# iface vmbr30 inet static
+# 	address 10.55.55.41/24
+
+
+# This is not a bridge, this is a standard vlan subinterface
+# that the host uses to connect to the SAN. It is not accessable
+# to VMs. If VMs needs access to vlan555, you need to configure it
+# as a vmbr555, like above.
+auto vlan555
+iface vlan555 inet manual
 	address 10.254.0.41/24
-	bridge-stp off
+	vlan-raw-device vmbr0
 	mtu 9000
 
+# This is required to load the SDN configuration, and should be last.
 source /etc/network/interfaces.d/*
 
