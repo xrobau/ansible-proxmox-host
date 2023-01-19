@@ -23,4 +23,5 @@
   ignore_errors: yes
   when: container is not defined
 
-
+- name: loadmodules
+  command: modprobe cpuid msr

@@ -238,6 +238,17 @@
   tags:
     - chrony
 
+- name: Autoload msr and cpuid kernel modules
+  copy:
+    src: rasdaemon.conf
+    dest: /etc/modules-load.d/
+  notify:
+    - loadmodules
+  tags:
+    - ras
+
+- meta: flush_handlers
+
 - name: Make sure rasdaemon is ready to catch any hardware errors
   service:
     name: rasdaemon
