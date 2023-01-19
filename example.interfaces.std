@@ -19,13 +19,12 @@ auto eth1
 iface eth1 inet manual
 	mtu 9000
 
-# Do not add miimon or use-carrier settings. Those are only for
-# very old network interfaces.
 # Do not use xmit_hash_policy, as it can lead to out-of-order
-# packets.
+# packets. Just leave everything at the defaults.
 iface bond0 inet manual
 	bond-slaves eth0 eth1
 	bond-mode 802.3ad
+	miimon 100
 	mtu 9000
 
 # This is the primary bridge that everything feeds from. Yes,
