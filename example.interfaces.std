@@ -19,11 +19,13 @@ auto eth1
 iface eth1 inet manual
 	mtu 9000
 
-# Do not use xmit_hash_policy, as it can lead to out-of-order
-# packets. Just leave everything at the defaults.
+# Do not use a different xmit_hash_policy, as it can lead
+# to out-of-order packets. These defaults will be fine for
+# almost everyone!
 iface bond0 inet manual
 	bond-slaves eth0 eth1
 	bond-mode 802.3ad
+	bond-xmit-hash-policy layer2+3
 	miimon 100
 	mtu 9000
 
