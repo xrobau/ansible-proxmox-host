@@ -48,6 +48,8 @@
       - libpve-network-perl 
       - sysstat
       - chrony
+      - cpuid
+      - rasdaemon
     state: present
 
 - name: Update grub defaults
@@ -235,6 +237,12 @@
     enabled: true
   tags:
     - chrony
+
+- name: Make sure rasdaemon is ready to catch any hardware errors
+  service:
+    name: rasdaemon
+    state: started
+    enabled: true
 
 - name: Put 443-8006 remapper script in place
   copy:
