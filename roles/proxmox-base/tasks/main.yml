@@ -50,6 +50,9 @@
       - chrony
       - cpuid
       - rasdaemon
+      - numactl
+      - numad
+      - numatop
     state: present
 
 - name: Update grub defaults
