@@ -224,6 +224,15 @@
   notify:
     - restart-sshd
 
+- name: Disable DNS Reverse lookups by sshd
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: present
+    regexp: '^UseDNS'
+    line: "UseDNS no"
+  notify:
+    - restart-sshd
+
 - name: Put chrony config file in place
   copy:
     src: chrony.conf
