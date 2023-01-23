@@ -1,0 +1,4 @@
+# This file put in place by the proxmox-base role of ansible
+#
+# Disable all DNS queries by sshd
+SSHD_OPTS=-u0

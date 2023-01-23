@@ -233,6 +233,13 @@
   notify:
     - restart-sshd
 
+- name: ALSO Disable DNS Reverse lookups by sshd
+  copy:
+    src: etc.default.ssh
+    dest: /etc/default/ssh
+  notify:
+    - restart-sshd
+
 - name: Put chrony config file in place
   copy:
     src: chrony.conf
