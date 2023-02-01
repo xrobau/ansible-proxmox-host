@@ -21,3 +21,18 @@
     path: /etc/pam.d/login
   tags:
     - fh
+
+- name: Update systemd filehandle limits
+  lineinfile:
+    path: /etc/systemd/{{ item }}
+    regex: '^#?DefaultLimitNOFILE='
+    line: DefaultLimitNOFILE=818354
+  tags:
+    - fh
+    - systemd
+  notify: systemctl-reload
+  with_items:
+    - system.conf
+    - user.conf
+
+- meta: flush_handlers

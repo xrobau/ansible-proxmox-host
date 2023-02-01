@@ -53,6 +53,7 @@
       - numactl
       - numad
       - numatop
+      - pve-kernel-6.1
     state: present
 
 - name: Update grub defaults

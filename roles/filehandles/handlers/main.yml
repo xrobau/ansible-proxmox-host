@@ -2,3 +2,7 @@
 - name: sysctl-reload
   command: sysctl --system
   ignore_errors: yes
+
+- name: systemctl-reload
+  command: systemctl daemon-reload
+

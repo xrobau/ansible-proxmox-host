@@ -23,9 +23,10 @@
     - kexec
   notify: systemctl-reload
 
-- name: Set bootpath for proxmox
+- name: Set bootpath and kernel version for proxmox
   set_fact:
     bootpath: /boot/pve
+    kernelvers: "-6.1"
   tags:
     - kexec
 
@@ -71,6 +72,8 @@
   tags:
     - kexec
   notify: systemctl-reload
+
+- meta: flush_handlers
 
 # Not sure why I need this *twice*, but it can't hurt.
 - name: Boot the kexec-load service

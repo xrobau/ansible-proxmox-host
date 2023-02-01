@@ -2,6 +2,11 @@
 
 Note this is run in TWO STAGES.
 
+# Recent Changes
+
+* 2023-02-02: Switch to 6.1 pve kernel
+* 2023-02-02: Increase system default filehandles
+
 ## Stage 0 (Host preparation)
 
 You will most likely need to run `apt-get -y install git make` to
@@ -27,8 +32,7 @@ XDP itself, and you are expecting that VM to route more than 1m
 packets per second (Normally for that usage it would be on dedicated
 hardware anyway, for reliability).
 
-## Stage 1 - Bootstrap
-
+## Stage 0 - Interface Example file
 The first time `make proxmox` is run, it will place some example
 interface files in /etc/network/interfaces and then exit. You can
 use those to prepare the host for the standard proxmox network
@@ -50,7 +54,11 @@ file.
 After you have done that, **CHECK YOU CAN GET IN VIA OUT OF BAND ACCESS**
 Obviously, if you're right in front of the machine, you can use the physical
 keyboard and monitor!
-and
+
+## Stage 1 - Bootstrap
+You can now run `make proxmox` again, and it will prepare the machine for
+use. It will error if `eth0` does not exist (which it should not), and you
+should now reboot (after configuring `/etc/network/interfaces`) the host.
 
 ## Stage 2 - Reboot
 If you correctly updated the interfaces file, everything should just

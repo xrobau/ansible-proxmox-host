@@ -9,7 +9,7 @@ After=sysinit.target
 Type=oneshot
 ExecStart=-/usr/bin/true
 RemainAfterExit=yes
-ExecStop=/usr/sbin/kexec -l {{ bootpath }}/vmlinuz --initrd={{ bootpath }}/initrd.img --reuse-cmdline
+ExecStop=/usr/sbin/kexec -l {{ bootpath }}/vmlinuz{{ kernelvers }} --initrd={{ bootpath }}/initrd.img{{ kernelvers }} --reuse-cmdline
 
 [Install]
 WantedBy=basic.target
