@@ -1,6 +1,7 @@
 ---
 - hosts: localhost
   roles:
+    - filehandles
     - proxmox-base
     - kexec
 

@@ -1,0 +1,23 @@
+---
+- name: Put sysctl fd limits in place
+  copy: src=91-filehandles.conf dest=/etc/sysctl.d
+  notify: sysctl-reload
+  tags:
+    - fh
+
+- meta: flush_handlers
+  tags:
+    - fh
+
+- name: Replace limits.conf
+  copy: src=20-nproc.conf dest=/etc/security/limits.d
+  tags:
+    - fh
+
+- name: Add limits.so to pam
+  lineinfile:
+    line: session required pam_limits.so
+    state: present
+    path: /etc/pam.d/login
+  tags:
+    - fh
