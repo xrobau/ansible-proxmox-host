@@ -1,0 +1,26 @@
+---
+- name: Force apt to only use ipv4
+  copy:
+    src: 10-apt-use-ipv4
+    dest: /etc/apt/apt.conf.d/
+
+- name: Select distro
+  set_fact:
+    distro: "{{ forcedistro | default(ansible_facts.distribution) }}"
+
+- name: Disable proxmox enterprise
+  template:
+    src: pve-enterprise.list
+    dest: /etc/apt/sources.list.d/pve-enterprise.list
+  notify:
+    - apt-update
+
+- name: Update sources.list
+  template:
+    src: sources.list
+    dest: /etc/apt/sources.list
+  notify:
+    - apt-update
+
+- meta: flush_handlers
+

@@ -2,3 +2,4 @@
 dependencies:
   - dpkg-python3
   - console-autologin
+  - apt-sources

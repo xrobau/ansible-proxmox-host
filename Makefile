@@ -13,8 +13,9 @@ ANSBIN=/usr/bin/ansible-playbook
 ANSIBLE_HOST_KEY_CHECKING=False
 export ANSIBLE_HOST_KEY_CHECKING
 
-NOIPMI=$(shell [ ! -e /etc/noipmi ] || echo '-e noipmi=true')
-ANSIBLE=$(ANSBIN) $(NOIPMI)
+NOIPMI=$(shell [ -e /etc/noipmi ] && echo '-e noipmi=true')
+PVE7TO8=$(shell [ -e /usr/bin/pve7to8 ] && echo '-e pve7to8=true')
+ANSIBLE=$(ANSBIN) $(NOIPMI) $(PVE7TO8)
 
 .PHONY: setup
 setup: $(ANSBIN) ansible-collections base-packages /etc/network/example.interfaces.ovs /etc/network/example.interfaces
@@ -26,6 +27,14 @@ proxmox: | setup
 .PHONY: kexec
 kexec: | setup
 	$(ANSIBLE) -i localhost, kexec.yml
+
+.PHONY: upgrade
+upgrade:
+	$(ANSIBLE) -i localhost, upgrade.yml
+	@echo "Preparations for the upgrade are complete. At this point, update and upgrade following"
+	@echo "the instructions at https://pve.proxmox.com/wiki/Upgrade_from_7_to_8"
+	@echo ""
+	@echo "When complete, to ensure kexec doesn't get confused, power off and back on this host"
 
 .PHONY: update
 update:

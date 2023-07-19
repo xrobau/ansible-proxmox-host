@@ -26,7 +26,7 @@
 - name: Set bootpath and kernel version for proxmox
   set_fact:
     bootpath: /boot/pve
-    kernelvers: "-6.1"
+    kernelvers: "{{ forcekernelvers | default('-6.1') }}"
   tags:
     - kexec
 

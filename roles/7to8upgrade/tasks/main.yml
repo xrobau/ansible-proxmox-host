@@ -1,0 +1,33 @@
+---
+- name: Fail if pve7to8 is missing
+  fail:
+    msg: /usr/bin/pve7to8 is not present
+  when: pve7to8 is not defined
+
+- name: Update kexec to switch back to 5.x kernel
+  include_role:
+    name: kexec
+  vars:
+    forcekernelvers: ""
+  when: ansible_facts.kernel is not match ("5.*")
+
+- name: Run pve7to8
+  shell:
+    cmd: /usr/bin/pve7to8 --full | grep 'WARN:'
+  failed_when: false
+  changed_when: false
+  register: p
+
+- name: Fail if there were warnings, ansible can not continue
+  fail:
+    msg: "{{ p.stdout | quote }}"
+  when: p.stdout
+
+- name: Update apt sources to use bookworm
+  include_role:
+    name: apt-sources
+  vars:
+    forcedistro: bookworm
+
+
+
