@@ -13,16 +13,19 @@ ANSBIN=/usr/bin/ansible-playbook
 ANSIBLE_HOST_KEY_CHECKING=False
 export ANSIBLE_HOST_KEY_CHECKING
 
+NOIPMI=$(shell [ ! -e /etc/noipmi ] || echo '-e noipmi=true')
+ANSIBLE=$(ANSBIN) $(NOIPMI)
+
 .PHONY: setup
 setup: $(ANSBIN) ansible-collections base-packages /etc/network/example.interfaces.ovs /etc/network/example.interfaces
 
 .PHONY: proxmox
 proxmox: | setup
-	$(ANSBIN) -i localhost, proxmox.yml
+	$(ANSIBLE) -i localhost, proxmox.yml
 
 .PHONY: kexec
 kexec: | setup
-	$(ANSBIN) -i localhost, kexec.yml
+	$(ANSIBLE) -i localhost, kexec.yml
 
 .PHONY: update
 update:

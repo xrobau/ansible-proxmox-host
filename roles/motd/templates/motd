@@ -1,0 +1,26 @@
+** THIS IS A PROXMOX SERVER MANAGED BY ANSIBLE **
+
+This machine has been deployed using the ansible-proxmox-host playbook.
+
+WARNING: When this machine is rebooted it will ALWAYS USE KEXEC.
+
+If you have changed the kernel params, they will not take effect
+as the default setting is --reuse-cmdline. Edit the kexec-load.service
+file in /etc/systemd/system with the correct params, and run
+systemctl daemon-reload. Or just do a full reboot.
+
+To force a full system reboot use 'systemctl --force reboot'
+
+{% if ipmi.stdout %}
+IPMI Address of this machine is {{ ipmi.stdout }}
+{% else %}
+{% if noipmi is not defined %}
+WARNING: No IPMI Address for this machine could be discovered!
+
+If this machine does NOT have IPMI, create an empty file /etc/noipmi
+to supress this warning and run ansible again.
+{% else %}
+This machine DOES NOT have IPMI hardware (/etc/noipmi exists)
+{% endif %}
+{% endif %}
+

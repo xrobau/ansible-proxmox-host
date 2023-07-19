@@ -4,5 +4,6 @@
     - filehandles
     - proxmox-base
     - kexec
+    - motd
 
 

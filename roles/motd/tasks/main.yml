@@ -1,0 +1,24 @@
+---
+- name: Make sure ipmitool is installed
+  package:
+    name:
+      - ipmitool
+  tags:
+    - ipmi
+    - motd
+
+- name: Get IPMI Address
+  shell:
+    cmd: ipmitool lan print | awk '/^IP Address  / { print $4 }'
+  register: ipmi
+  changed_when: false
+  tags:
+    - ipmi
+    - motd
+
+- name: Put MOTD in place with ipmi address
+  template: src=motd dest=/etc/motd
+  tags:
+    - motd
+
+
