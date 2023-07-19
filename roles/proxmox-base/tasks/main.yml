@@ -11,12 +11,49 @@
   notify:
     - apt-update
 
-- name: Put the public repo in place
-  copy:
-    src: sources.list
-    dest: /etc/apt/sources.list
-  notify:
-    - apt-update
+################################
+# Version Specific Task Blocks
+################################
+
+- name: 'Debian 11 / Proxmox 7.x based tasks block.'
+  block:
+
+  - name: Put the public repo in place
+    copy:
+      src: sources.list
+      dest: /etc/apt/sources.list
+    notify:
+      - apt-update
+
+  when:
+    - ansible_facts['distribution'] == "Debian"
+    - ansible_facts['distribution_major_version'] == "11"
+
+
+
+- name: 'Debian 12 / Proxmox 8.x based tasks block.'
+  block:
+
+  - name: Put the public repo in place
+    copy:
+      src: sources.list
+      dest: /etc/apt/sources.list
+
+  - name: 'Disabling Ceph repo and changing sources.list'
+    command: '{{ item }}'
+    notify:
+      - apt-update
+    loop:
+      - sed -i 's/bullseye/bookworm/g' /etc/apt/sources.list
+      - sed -i 's/^deb/# deb/g' /etc/apt/sources.list.d/ceph.list
+
+  when:
+    - ansible_facts['distribution'] == "Debian"
+    - ansible_facts['distribution_major_version'] == "12"
+
+#######################################
+# End of Version Specific Task Blocks
+#######################################
 
 - meta: flush_handlers
 
