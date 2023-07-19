@@ -6,7 +6,7 @@
 
 - name: Select distro
   set_fact:
-    distro: "{{ forcedistro | default(ansible_facts.distribution) }}"
+    distro: "{{ forcedistro | default(ansible_facts.distribution_release) }}"
 
 - name: Disable proxmox enterprise
   template:

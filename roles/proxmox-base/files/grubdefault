@@ -1,8 +1,9 @@
-# This file is put in place by the ubuntu-base role in ansible.
+# This file is put in place by the proxmox-base role in ansible.
 # If you change it, it will be overwritten.
 #
-# But don't forget to run 'update-grub' afterwards, anyway, to
-# update /boot/grub/grub.cfg.
+# But IF YOU DO, don't forget to run 'update-grub' afterwards, to
+# update /boot/grub/grub.cfg. But please update it in ansible
+# instead.
 
 GRUB_DEFAULT=0
 GRUB_TIMEOUT_STYLE=menu
@@ -20,7 +21,10 @@ GRUB_CMDLINE_LINUX_DEFAULT=""
 #    Disable all SPECTRE/etc mitigations (minor performance improvement)
 # init_on_alloc=0:
 #    Do not clear pages when allocated (significant performance improvement)
-GRUB_CMDLINE_LINUX="nofb nomodeset net.ifnames=0 biosdevname=0 mitigations=off init_on_alloc=0"
+# pcie_aspm=off
+#    Disable power management of PCIE cards, to avoid PME Spurious native interrupt errors
+#    See https://forum.proxmox.com/threads/kernel-pcieport-0000-c0-03-1-pme-spurious-native-interrupt.101338/
+GRUB_CMDLINE_LINUX="nofb nomodeset net.ifnames=0 biosdevname=0 mitigations=off init_on_alloc=0 pcie_aspm=off"
 
 # Always text console
 GRUB_TERMINAL=console

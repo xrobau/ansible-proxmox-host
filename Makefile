@@ -34,7 +34,11 @@ upgrade:
 	@echo "Preparations for the upgrade are complete. At this point, update and upgrade following"
 	@echo "the instructions at https://pve.proxmox.com/wiki/Upgrade_from_7_to_8"
 	@echo ""
-	@echo "When complete, to ensure kexec doesn't get confused, power off and back on this host"
+	@echo "When complete, to ensure kexec doesn't get confused, power off and back on this host,"
+	@echo "and then run 'make upgrade' again, to ensure everything is correct."
+	@echo ""
+	@echo "Finally, run 'make proxmox' to update this machine, and reboot it to make sure everything"
+	@echo "is working."
 
 .PHONY: update
 update:

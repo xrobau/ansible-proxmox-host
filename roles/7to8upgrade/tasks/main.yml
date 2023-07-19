@@ -4,12 +4,12 @@
     msg: /usr/bin/pve7to8 is not present
   when: pve7to8 is not defined
 
-- name: Update kexec to switch back to 5.x kernel
+- name: Update kexec to switch back to 5.x kernel if on 6.1
   include_role:
     name: kexec
   vars:
     forcekernelvers: ""
-  when: ansible_facts.kernel is not match ("5.*")
+  when: ansible_facts.kernel is match ("6.1.*")
 
 - name: Run pve7to8
   shell:
@@ -28,6 +28,7 @@
     name: apt-sources
   vars:
     forcedistro: bookworm
+  when: ansible_facts.distribution_release != "bookworm"
 
 
 
