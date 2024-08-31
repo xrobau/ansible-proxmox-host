@@ -2,7 +2,7 @@ TOOLS += ansible-playbook
 PKG_ansible-playbook=ansible
 ANSBIN=/usr/bin/ansible-playbook
 
-STARGETS += $(ANSBIN) /etc/ansible.hostname
+STARGETS += $(ANSBIN) /etc/ansible.hostname /tmp/.hostschecked
 
 # This is needed so ansible can make sure /etc/hosts and other
 # things are correct
@@ -16,6 +16,12 @@ hostname /etc/ansible.hostname:
 				hostname > /etc/ansible.hostname; \
 			fi; \
 		fi; rm -f hosts
+
+/tmp/.hostschecked: /etc/ansible.hostname
+	@H=$$(cat $<); V=$$(awk '/'$$H'/ { print $$1 }' /etc/hosts); \
+		if [ ! "$$H" ]; then echo "The hostname '$$H' is not in /etc/hosts, this must be fixed"; exit 9; fi; \
+		if [ ! "$$(ip -o addr | grep "$$V")" ]; then echo "The IP $$V from /etc/hosts is not in on this system, fix /etc/network/interfaces (or /etc/hosts)"; exit 9; fi;
+	@touch $@
 
 hosts: /etc/ansible.hostname
 	@echo -e '[all]\nlocalhost hostname='$$(cat $<) > $@
