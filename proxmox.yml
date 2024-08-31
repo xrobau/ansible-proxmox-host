@@ -2,6 +2,7 @@
 - hosts: localhost
   roles:
     - filehandles
+    - apt-sources
     - proxmox-base
     - kexec
     - motd

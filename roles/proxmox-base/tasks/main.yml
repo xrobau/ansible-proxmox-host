@@ -1,4 +1,16 @@
 ---
+
+- name: Set hostname
+  hostname:
+    name: "{{ hostname }}"
+  when: hostname is defined
+  tags: hostname
+
+- name: Fix /etc/hosts
+  template: src=hosts dest=/etc/hosts
+  when: hostname is defined
+  tags: hostname
+
 - name: Remove unneeded packages
   apt:
     name:
@@ -11,7 +23,7 @@
     purge: yes
     autoremove: yes
 
-- name: Install base packages that are needed
+- name: Install standard base packages
   apt:
     name:
       - vim
@@ -51,46 +63,6 @@
 - fail:
     msg: "eth0 does not exist, you must reboot the machine and reconfig /etc/network/interfaces"
   when: not eth.stat.exists
-
-- name: Fix default editor
-  alternatives:
-    name: editor
-    path: /usr/bin/vim.basic
-  tags:
-    - editor
-
-- name: Stop vim from doing crazy things with the mouse
-  copy:
-    src: vimrc
-    dest: /root/.vimrc
-
-- name: Turn off paste blocking in bash
-  lineinfile:
-    path: /etc/bash.bashrc
-    line: bind 'set enable-bracketed-paste off'
-    create: yes
-  tags:
-    - bracket
-
-- name: Turn off paste blocking everywhere else
-  lineinfile:
-    path: /etc/inputrc
-    line: "set enable-bracketed-paste off"
-    create: yes
-  tags:
-    - bracket
-
-- name: Hard-code editor
-  lineinfile:
-    path: /etc/bash.bashrc
-    line: export EDITOR=vim
-    create: yes
-
-- name: Hard-code visual
-  lineinfile:
-    path: /etc/bash.bashrc
-    line: export VISUAL=vim
-    create: yes
 
 - name: Stop rsyslog from dropping privs if it's there
   lineinfile:

@@ -4,6 +4,7 @@ Note this is run in TWO STAGES.
 
 # Recent Changes
 
+* 2024-08-31: Update to work with latest proxmox
 * 2023-02-02: Switch to 6.1 pve kernel
 * 2023-02-02: Increase system default filehandles
 

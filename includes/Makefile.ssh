@@ -1,0 +1,18 @@
+SHELL=/bin/bash
+
+SSHFILES=$(addprefix $(TMPDIR)/,$(addsuffix .key,$(SSHKEYS)))
+
+xxx:
+	@echo Hi $(SSHFILES)
+
+ssh: $(GROUPVARS)/all/ssh_keys
+
+$(GROUPVARS)/all/ssh_keys: $(GROUPVARS) $(GROUPVARS)/all $(SSHFILES)
+	@echo -e "---\nsshkeys:\n  - 'cert-authority,principals=\"superuser\" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILJHwcd5nqXAN4NkNWG/F/29Bq3TpNhinQnn/CeA/5kG CA'" > $@
+	@for k in $(SSHKEYS); do readarray -t bkeys < $(TMPDIR)/$$k.key; for l in "$${bkeys[@]}"; do echo "  - '$$l autogen-github-$$k'"; done; done >>$@
+
+$(TMPDIR)/%.key: $(TMPDIR)
+	@echo I am trying to download the ssh key for $*
+	@curl -s https://github.com/$*.keys -o $@
+	@if [ "$$(stat $@ --format='%s')" -lt 10 ]; then echo "Size of key for $* too small, deleting ('$$(cat $@)')"; rm -f $@; exit 1; fi
+

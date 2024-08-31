@@ -1,6 +1,6 @@
-deb http://ftp.us.debian.org/debian {{ distro }} main contrib
+deb http://ftp.au.debian.org/debian {{ distro }} main contrib
 
-deb http://ftp.us.debian.org/debian {{ distro }}-updates main contrib
+deb http://ftp.au.debian.org/debian {{ distro }}-updates main contrib
 
 # security updates
 deb http://security.debian.org {{ distro }}-security main contrib

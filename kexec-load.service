@@ -1,0 +1,16 @@
+[Unit]
+Description=Waiting for reboot to load kexec
+Documentation=man:kexec(8)
+DefaultDependencies=no
+Requires=sysinit.target
+After=sysinit.target
+
+[Service]
+Type=oneshot
+ExecStart=-/usr/bin/true
+RemainAfterExit=yes
+ExecStop=/usr/sbin/kexec -l /boot/vmlinuz --initrd=/boot/initrd.img --reuse-cmdline
+
+[Install]
+WantedBy=basic.target
+

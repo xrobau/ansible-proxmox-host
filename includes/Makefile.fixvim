@@ -1,0 +1,16 @@
+VIMFIXED=/tmp/.vimfixed
+
+# Don't run this by default
+# STARGETS += $(VIMFIXED)
+
+.PHONY: vim
+vim: $(VIMFIXED)
+
+# Comment out (") any lines that enable mouse overrides
+$(VIMFIXED): /usr/bin/vim
+	@sed -i 's/ set mouse=/"set mouse=/' /usr/share/vim/*/defaults*
+	@touch $@
+	@echo Stopped vim from stealing the mouse.
+
+
+

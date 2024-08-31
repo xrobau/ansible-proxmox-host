@@ -1,0 +1,37 @@
+---
+- name: Fix default editor
+  alternatives:
+    name: editor
+    path: /usr/bin/vim.basic
+  tags:
+    - editor
+
+- name: Turn off paste blocking in bash
+  lineinfile:
+    path: /etc/bash.bashrc
+    line: bind 'set enable-bracketed-paste off'
+    create: yes
+  tags:
+    - bracket
+
+- name: Turn off paste blocking everywhere else
+  lineinfile:
+    path: /etc/inputrc
+    line: "set enable-bracketed-paste off"
+    create: yes
+  tags:
+    - bracket
+
+- name: Hard-code editor
+  lineinfile:
+    path: /etc/bash.bashrc
+    line: export EDITOR=vim
+    create: yes
+
+- name: Hard-code visual
+  lineinfile:
+    path: /etc/bash.bashrc
+    line: export VISUAL=vim
+    create: yes
+
+

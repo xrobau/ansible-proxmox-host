@@ -1,0 +1,12 @@
+GDIR=/etc/systemd/system/getty@tty1.service.d
+GETTY=$(GDIR)/override.conf
+
+STARGETS += $(GDIR) $(GETTY)
+MKDIRS += $(GDIR)
+
+$(GETTY): override.conf $(GDIR)
+	cp override.conf $@
+	systemctl daemon-reload
+
+
+

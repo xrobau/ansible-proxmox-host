@@ -1,0 +1,21 @@
+STOOLS += kexec
+TOOLS += as
+PKG_kexec = kexec-tools
+PKG_as = binutils
+
+RSVC=/etc/systemd/system/systemd-reboot.service.d/override.conf
+KSVC=/etc/systemd/system/kexec-load.service
+
+STARGETS += $(RSVC) $(KSVC)
+
+$(RSVC): reboot-override.conf
+	mkdir -p $(@D)
+	cp $< $@
+	systemctl daemon-reload
+
+$(KSVC): kexec-load.service
+	cp $< $@
+	systemctl enable kexec-load
+	systemctl start kexec-load
+	systemctl daemon-reload
+

@@ -15,6 +15,13 @@
   notify:
     - apt-update
 
+- name: Disable proxmox ceph enterprise
+  template:
+    src: ceph.list
+    dest: /etc/apt/sources.list.d/ceph.list
+  notify:
+    - apt-update
+
 - name: Update sources.list
   template:
     src: sources.list

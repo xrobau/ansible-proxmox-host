@@ -1,0 +1,7 @@
+STARGETS += $(TMPDIR)/.needrestart-removed
+
+$(TMPDIR)/.needrestart-removed: $(TMPDIR)
+	@if [ -x /usr/sbin/needrestart ]; then apt-get remove --purge -y needrestart; fi
+	@touch $@
+
+
