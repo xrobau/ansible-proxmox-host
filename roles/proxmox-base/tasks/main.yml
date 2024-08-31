@@ -6,10 +6,10 @@
   when: hostname is defined
   tags: hostname
 
-- name: Fix /etc/hosts
-  template: src=hosts dest=/etc/hosts
-  when: hostname is defined
-  tags: hostname
+#- name: Fix /etc/hosts
+#  template: src=hosts dest=/etc/hosts
+#  when: hostname is defined
+#  tags: hostname
 
 - name: Remove unneeded packages
   apt:
