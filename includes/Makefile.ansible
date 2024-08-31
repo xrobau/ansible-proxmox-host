@@ -21,8 +21,9 @@ hosts: /etc/ansible.hostname
 	@echo -e '[all]\nlocalhost hostname='$$(cat $<) > $@
 
 
-.PHONY: ansible
-ansible: hosts $(GROUPVARS)/all/ssh_keys
+.PHONY: proxmox ansible
+proxmox ansible: hosts $(GROUPVARS)/all/ssh_keys
+	@echo 'If this errors with ssh permission issues, run "make keys" to fix'
 	$(ANSBIN) proxmox.yml
 
 

@@ -1,9 +1,9 @@
 SHELL=/bin/bash
 
-SSHFILES=$(addprefix $(TMPDIR)/,$(addsuffix .key,$(SSHKEYS)))
+# This is where proxmox keeps the replicated authkey file
+AKEYS=/etc/pve/priv/authorized_keys
 
-xxx:
-	@echo Hi $(SSHFILES)
+SSHFILES=$(addprefix $(TMPDIR)/,$(addsuffix .key,$(SSHKEYS)))
 
 ssh: $(GROUPVARS)/all/ssh_keys
 
@@ -16,3 +16,12 @@ $(TMPDIR)/%.key: $(TMPDIR)
 	@curl -s https://github.com/$*.keys -o $@
 	@if [ "$$(stat $@ --format='%s')" -lt 10 ]; then echo "Size of key for $* too small, deleting ('$$(cat $@)')"; rm -f $@; exit 1; fi
 
+
+# This makes sure that at least localhost can get in
+.PHONY: keys
+keys: $(AKEYS)
+
+$(AKEYS): ssh
+	mkdir -p $(@D)
+	cat $(SSHFILES) >> $@
+	cat $(HOME)/.ssh/id_rsa.pub >> $@

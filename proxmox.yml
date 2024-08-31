@@ -3,6 +3,7 @@
   roles:
     - filehandles
     - apt-sources
+    - sshkeys
     - proxmox-base
     - kexec
     - motd
