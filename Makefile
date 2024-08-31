@@ -27,11 +27,16 @@ PKG_netstat=net-tools
 # you think that 'make setup' is harmless, which I think it is!)
 .PHONY: halp
 halp: setup
-	@echo "You probably want to run 'make proxmox' and/or 'make kexec'"
+	@echo "You probably want to run 'make proxmox' now."
 	@echo "If you are using this to upgrade from 7 to 8, run 'make upgrade'"
 
 # Drag in any includes
 include $(wildcard includes/Makefile.*)
+
+# This is anything that's in TOOLS or STOOLS
+PKGS=$(addprefix /usr/bin/,$(TOOLS))
+SPKGS=$(addprefix /usr/sbin/,$(STOOLS))
+STARGETS += $(PKGS) $(SPKGS)
 
 NOIPMI=$(shell [ -e /etc/noipmi ] && echo '-e noipmi=true')
 PVE7TO8=$(shell [ -e /usr/bin/pve7to8 ] && echo '-e pve7to8=true')
@@ -39,12 +44,11 @@ ANSIBLE=$(ANSBIN) $(NOIPMI) $(PVE7TO8)
 
 .PHONY: setup
 setup: $(STARGETS)
-	echo setup
-
 
 # Just make anything in MKDIRS, easy DRY.
 $(MKDIRS):
 	mkdir -p $@
 
-
-
+# This installs whatever is needed in /usr/bin or /usr/sbin
+/usr/bin/% /usr/sbin/%:
+	@p="$(PKG_$*)"; p=$${p:=$*}; apt-get -y install $$p || ( echo "Don't know how to install $*, add PKG_$*=dpkgname to the makefile"; exit 1 )

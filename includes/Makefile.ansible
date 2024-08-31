@@ -2,7 +2,7 @@ TOOLS += ansible-playbook
 PKG_ansible-playbook=ansible
 ANSBIN=/usr/bin/ansible-playbook
 
-STARGETS += /etc/ansible.hostname
+STARGETS += $(ANSBIN) /etc/ansible.hostname
 
 # This is needed so ansible can make sure /etc/hosts and other
 # things are correct
@@ -22,8 +22,9 @@ hosts: /etc/ansible.hostname
 
 
 .PHONY: proxmox ansible
-proxmox ansible: hosts $(GROUPVARS)/all/ssh_keys
+proxmox ansible: hosts $(GROUPVARS)/all/ssh_keys ansible-collections
 	@echo 'If this errors with ssh permission issues, run "make keys" to fix'
 	$(ANSBIN) proxmox.yml
 
-
+$(ANSBIN):
+	apt-get -y install ansible
