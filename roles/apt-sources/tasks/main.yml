@@ -8,12 +8,14 @@
   set_fact:
     distro: "{{ forcedistro | default(ansible_facts.distribution_release) }}"
 
+--- Disabled, as Trixie has it already set up correctly
 - name: Disable proxmox enterprise
   template:
     src: pve-enterprise.list
     dest: /etc/apt/sources.list.d/pve-enterprise.list
   notify:
     - apt-update
+  when: false
 
 - name: Disable proxmox ceph enterprise
   template:
@@ -21,6 +23,7 @@
     dest: /etc/apt/sources.list.d/ceph.list
   notify:
     - apt-update
+  when: false
 
 - name: Update sources.list
   template:
@@ -28,6 +31,7 @@
     dest: /etc/apt/sources.list
   notify:
     - apt-update
+  when: false
 
 - meta: flush_handlers
 
