@@ -8,7 +8,7 @@
   set_fact:
     distro: "{{ forcedistro | default(ansible_facts.distribution_release) }}"
 
---- Disabled, as Trixie has it already set up correctly
+# Disabled, as Trixie has it already set up correctly
 - name: Disable proxmox enterprise
   template:
     src: pve-enterprise.list
