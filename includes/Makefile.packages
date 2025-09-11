@@ -2,13 +2,13 @@
 ansible-collections: ~/.ansible/collections/ansible_collections/community/general ~/.ansible/roles/jhu-sheridan-libraries.postfix-smarthost/README.md ~/.ansible/collections/ansible_collections/ansible/posix/MANIFEST.json
 
 ~/.ansible/collections/ansible_collections/ansible/posix/MANIFEST.json:
-	@ansible-galaxy collection install ansible.posix
+	@ansible-galaxy collection install --force ansible.posix
 
 ~/.ansible/roles/jhu-sheridan-libraries.postfix-smarthost/README.md:
-	@ansible-galaxy install jhu-sheridan-libraries.postfix-smarthost
+	@ansible-galaxy install --force jhu-sheridan-libraries.postfix-smarthost
 
 ~/.ansible/collections/ansible_collections/community/general:
-	@ansible-galaxy collection install community.general
+	@ansible-galaxy collection install --force community.general
 
 .PHONY: base-packages
 base-packages: /usr/bin/wget /usr/bin/unzip /usr/bin/vim /usr/bin/ping
