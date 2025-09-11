@@ -28,7 +28,6 @@ PKG_netstat=net-tools
 .PHONY: halp
 halp: setup
 	@echo "You probably want to run 'make proxmox' now."
-	@echo "If you are using this to upgrade from 7 to 8, run 'make upgrade'"
 
 # Drag in any includes
 include $(wildcard includes/Makefile.*)
@@ -39,8 +38,7 @@ SPKGS=$(addprefix /usr/sbin/,$(STOOLS))
 STARGETS += $(PKGS) $(SPKGS)
 
 NOIPMI=$(shell [ -e /etc/noipmi ] && echo '-e noipmi=true')
-PVE7TO8=$(shell [ -e /usr/bin/pve7to8 ] && echo '-e pve7to8=true')
-ANSIBLE=$(ANSBIN) $(NOIPMI) $(PVE7TO8)
+ANSIBLE=$(ANSBIN) $(NOIPMI)
 
 .PHONY: setup
 setup: $(STARGETS)

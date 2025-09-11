@@ -1,6 +1,0 @@
----
-- hosts: localhost
-  roles:
-    - 7to8upgrade
-
-
