@@ -23,7 +23,7 @@ iface vmbr0 inet static
 # Example of the front-end IP address with automatic SSL forwarding
 auto vmbr30
 iface vmbr30 inet static
-        bridge-ports vmbr0.30
+        bridge-ports bond0.30
         bridge-stp off
         bridge-fd 0
         mtu 1500
@@ -36,7 +36,7 @@ iface vmbr30 inet static
 
 auto vmbr128
 iface vmbr128 inet static
-	bridge-ports vmbr0.128
+	bridge-ports bond0.128
 	bridge-stp off
 	bridge-fd 0
 	address 10.8.128.51/24
@@ -44,7 +44,7 @@ iface vmbr128 inet static
 
 auto vmbr555
 iface vmbr555 inet static
-	bridge-ports vmbr0.555
+	bridge-ports bond0.555
 	bridge-stp off
 	bridge-fd 0
 	address 10.8.61.51/24
