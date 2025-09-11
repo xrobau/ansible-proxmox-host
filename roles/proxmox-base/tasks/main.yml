@@ -61,7 +61,7 @@
   register: eth
 
 - fail:
-    msg: "eth0 does not exist, you must reboot the machine and reconfig /etc/network/interfaces"
+    msg: "eth0 does not exist, you must reboot the machine and reconfig /etc/network/interfaces - use /etc/network/interfaces.example as a template"
   when: not eth.stat.exists
 
 - name: Stop rsyslog from dropping privs if it's there

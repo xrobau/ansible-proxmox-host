@@ -1,0 +1,9 @@
+# Put /etc/network/interfaces.example in place
+STARGETS += /etc/network/interfaces.example
+
+/etc/network/interfaces.example: example.interfaces.std
+	@cp $< $@
+
+
+
+
