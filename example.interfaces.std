@@ -20,6 +20,20 @@ iface vmbr0 inet static
 	bridge-vids 2-4094
 	mtu 9000
 
+# Example of the front-end IP address with automatic SSL forwarding
+auto vmbr30
+iface vmbr30 inet static
+        bridge-ports vmbr0.30
+        bridge-stp off
+        bridge-fd 0
+        mtu 1500
+        address 10.40.0.51/24
+        # If you want port 8006 to be mapped to port 443 on this
+        # interface, uncomment this line. The fix-port-8006 script
+        # is in the Ansible proxmox-base role, so only enable this
+        # after you have run ansible.
+        # post-up /usr/local/bin/fix-port-8006.sh
+
 auto vmbr128
 iface vmbr128 inet static
 	bridge-ports vmbr0.128
